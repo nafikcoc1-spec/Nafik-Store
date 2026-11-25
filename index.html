@@ -1,32 +1,546 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b67e9">
-<title>Nafik Store — Kalkulator Layanan Email</title>
+<title>Nafik Reward Panel</title>
 <style>
-:root{--bg:#081323;--panel:#11243a;--panel2:#0c1b2c;--blue:#1677f8;--muted:#9bb2cc;--line:#223b57;--text:#f5f8ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#12345a 0,#081323 45%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
-.wrap{max-width:780px;margin:auto;padding:18px}.hero{padding:22px 20px;border-radius:22px;background:linear-gradient(135deg,#1677f8,#104b9b);box-shadow:0 12px 35px #00152b66}.brand{font-weight:800;letter-spacing:.6px;font-size:22px}.hero p{margin:8px 0 0;color:#dceaff}.card{background:linear-gradient(180deg,#132840,#102237);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:16px;box-shadow:0 8px 24px #0002}.eyebrow{color:var(--muted);font-size:13px}.price{font-size:32px;font-weight:850;color:#77b7ff;margin:3px 0}.field{margin-top:14px}label{display:block;color:#bed0e5;font-size:14px;margin-bottom:7px}input{width:100%;padding:14px;border:1px solid #34506e;background:#091728;color:white;border-radius:12px;font-size:16px}input:focus{outline:2px solid #2b80ff66;border-color:#4192ff}.summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;margin-top:18px}.summary strong{font-size:23px;color:#64dba5}.btn{width:100%;padding:14px;margin-top:14px;border:0;border-radius:12px;background:var(--blue);color:white;font-weight:750;font-size:16px;cursor:pointer}.btn.secondary{background:#1d3552;border:1px solid #3a5775}.note{color:var(--muted);font-size:13px;line-height:1.5}.foot{text-align:center;color:#7f98b5;font-size:12px;padding:22px 10px}
+*{box-sizing:border-box}
+body{margin:0;background:#071321;color:#eef5ff;font-family:Arial}
+header{background:linear-gradient(130deg,#1166d5,#173b87);padding:18px;position:sticky;top:0;z-index:10}
+main{max-width:720px;margin:auto;padding:14px}
+.card{background:#10243c;border:1px solid #29445e;border-radius:15px;padding:15px;margin:12px 0}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.stat{background:#0a1b30;padding:13px;border-radius:12px}
+.stat small{color:#98b2d0}
+.stat b{font-size:23px;display:block;margin-top:7px}
+input,select,textarea{width:100%;padding:12px;margin:7px 0 12px;background:#08192c;border:1px solid #34516b;color:white;border-radius:10px}
+button{padding:11px 13px;background:#2478ed;color:white;border:0;border-radius:9px;font-weight:bold;margin:3px;cursor:pointer}
+.gray{background:#344b66}
+.red{background:#bd3b50}
+.green{background:#167b52}
+.hidden{display:none!important}
+.tabs{display:flex;gap:6px;overflow-x:auto;position:sticky;top:82px;background:#071321;padding:8px 0;z-index:8}
+.tabs button{white-space:nowrap}
+.panel{display:none}
+.panel.active{display:block}
+.item{padding:12px 0;border-bottom:1px solid #29435d}
+.muted{font-size:12px;color:#9ab3ce}
+.badge{background:#354d68;padding:4px 9px;border-radius:20px;font-size:11px}
+.pending{background:#73571e}
+.approved{background:#176347}
+.rejected{background:#773345}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.details{display:none;background:#0a1b2e;padding:12px;border-radius:10px;margin-top:10px}
+.details.open{display:block}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="hero"><div class="brand">NAFIK STORE</div><p>Kalkulator estimasi layanan email · akses publik</p></header>
-<section class="card"><div class="eyebrow">RATE LAYANAN</div><div class="price">Rp1.000 <span style="font-size:15px;color:#dceaff;font-weight:500">/ unit</span></div><div class="note">Kalkulator estimasi biaya. Tidak meminta password atau kode OTP.</div></section>
-<section class="card"><h2 style="margin:0 0 6px;font-size:19px">Hitung estimasi</h2><div class="field"><label for="qty">Jumlah layanan</label><input id="qty" type="number" min="0" step="1" inputmode="numeric" placeholder="Masukkan jumlah" value="1"></div><div class="summary"><span>Total estimasi</span><strong id="total">Rp1.000</strong></div><button class="btn" id="copy">Salin ringkasan</button><button class="btn secondary" id="reset">Reset kalkulator</button></section>
-<section class="card"><h3 style="margin-top:0">Info</h3><p class="note">Website statis ini tidak mengumpulkan data pengguna dan tidak menyimpan riwayat transaksi. Untuk layanan email yang sah, gunakan alamat email milik sendiri dan jangan bagikan password, OTP, atau kode pemulihan.</p></section>
-<div class="foot">Nafik Store · halaman statis gratis</div>
+
+<header>
+<h2 style="margin:0">NAFIK REWARD</h2>
+<div class="muted">User & Admin Control Panel</div>
+</header>
+
+<main>
+
+<!-- LOGIN / REGISTER -->
+<section id="auth" class="card">
+<h3 id="authTitle">Login</h3>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button class="gray" onclick="register()">Register</button>
+<p class="muted">Admin demo: admin / 2468</p>
+</section>
+
+<!-- USER PANEL -->
+<section id="userPanel" class="hidden">
+
+<div class="card">
+<div class="muted">Saldo</div>
+<h1 id="balance">Rp0</h1>
+<div class="muted">Saldo tersedia untuk WD: <b id="available">Rp0</b></div>
 </div>
+
+<div class="tabs" id="userTabs">
+<button onclick="userTab('uHome',this)">Home</button>
+<button onclick="userTab('uSubmit',this)">Submit</button>
+<button onclick="userTab('uWD',this)">Withdrawal</button>
+<button onclick="userTab('uHistory',this)">Riwayat</button>
+</div>
+
+<section id="uHome" class="panel active">
+<div class="card">
+<h3>Profil Pemain</h3>
+<div id="myProfile"></div>
+</div>
+</section>
+
+<section id="uSubmit" class="panel">
+<div class="card">
+<h3>Submit Item / Layanan</h3>
+<input id="itemQty" type="number" min="1" placeholder="Jumlah item">
+<input id="itemRef" placeholder="ID referensi item">
+<textarea id="itemNote" placeholder="Catatan opsional"></textarea>
+<button onclick="submitItem()">Kirim Request</button>
+</div>
+</section>
+
+<section id="uWD" class="panel">
+<div class="card">
+<h3>Withdrawal</h3>
+<p class="muted">Minimal WD Rp1.000</p>
+<input id="wdAmount" type="number" min="1000" placeholder="Nominal WD">
+<select id="wdMethod">
+<option>DANA</option>
+<option>GoPay</option>
+<option>OVO</option>
+<option>ShopeePay</option>
+<option>BRI</option>
+<option>BCA</option>
+<option>BNI</option>
+<option>Mandiri</option>
+<option>Bank lainnya</option>
+</select>
+<input id="wdName" placeholder="Nama penerima">
+<input id="wdAccount" placeholder="Nomor rekening / wallet">
+<button onclick="submitWD()">Ajukan WD</button>
+</div>
+</section>
+
+<section id="uHistory" class="panel">
+<div class="card">
+<h3>Riwayat Submit</h3>
+<div id="myItems"></div>
+</div>
+<div class="card">
+<h3>Riwayat WD</h3>
+<div id="myWDs"></div>
+</div>
+</section>
+
+<button class="red" onclick="logout()">Logout</button>
+</section>
+
+<!-- ADMIN PANEL -->
+<section id="adminPanel" class="hidden">
+
+<div class="stats">
+<div class="stat"><small>Total Player</small><b id="totalPlayers">0</b></div>
+<div class="stat"><small>Player Aktif</small><b id="activePlayers">0</b></div>
+<div class="stat"><small>Pending Submit</small><b id="pendingItems">0</b></div>
+<div class="stat"><small>Pending WD</small><b id="pendingWds">0</b></div>
+</div>
+
+<div class="tabs" id="adminTabs">
+<button onclick="adminTab('aHome',this)">Overview</button>
+<button onclick="adminTab('aPlayers',this)">Players</button>
+<button onclick="adminTab('aItems',this)">Requests</button>
+<button onclick="adminTab('aWD',this)">WD</button>
+</div>
+
+<section id="aHome" class="panel active">
+<div class="card">
+<h3>Admin Overview</h3>
+<div id="overview"></div>
+</div>
+</section>
+
+<section id="aPlayers" class="panel">
+<div class="card">
+<h3>Player Management</h3>
+<input id="playerSearch" placeholder="Cari username..." oninput="renderPlayers()">
+<div id="playersList"></div>
+</div>
+</section>
+
+<section id="aItems" class="panel">
+<div class="card">
+<h3>Submit Requests</h3>
+<div id="adminItems"></div>
+</div>
+</section>
+
+<section id="aWD" class="panel">
+<div class="card">
+<h3>Withdrawal Queue</h3>
+<div id="adminWD"></div>
+</div>
+</section>
+
+<button class="red" onclick="logout()">Logout Admin</button>
+</section>
+
+</main>
+
 <script>
-const RATE=1000, qty=document.getElementById('qty'), total=document.getElementById('total');
-function format(n){return 'Rp'+Math.max(0,n).toLocaleString('id-ID')}
-function update(){let n=Math.max(0,Math.floor(Number(qty.value)||0));total.textContent=format(n*RATE)}
-qty.addEventListener('input',update);
-document.getElementById('reset').onclick=()=>{qty.value=1;update()};
-document.getElementById('copy').onclick=async()=>{let n=Math.max(0,Math.floor(Number(qty.value)||0));let txt=`Nafik Store\nJumlah layanan: ${n}\nRate: Rp${RATE.toLocaleString('id-ID')} / unit\nTotal estimasi: ${format(n*RATE)}`;try{await navigator.clipboard.writeText(txt);alert('Ringkasan disalin!')}catch(e){alert(txt)}};
-update();
+const KEY="nafik_reward_final_demo";
+const MINWD=1000;
+
+let db=JSON.parse(localStorage.getItem(KEY)||"null");
+if(!db){
+ db={
+  users:[{
+   username:"admin",password:"2468",role:"admin",
+   joined:Date.now(),ban:null
+  }],
+  balances:{},
+  items:[],
+  wds:[]
+ };
+ save();
+}
+
+let current=null;
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+}
+
+function money(n){
+ return "Rp"+Number(n||0).toLocaleString("id-ID");
+}
+
+function esc(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",
+ '"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function getUser(name){
+ return db.users.find(u=>u.username===name);
+}
+
+function bal(name){
+ return Number(db.balances[name]||0);
+}
+
+function pendingWD(name){
+ return db.wds.filter(w=>w.username===name&&w.status==="pending")
+ .reduce((sum,w)=>sum+w.amount,0);
+}
+
+function available(name){
+ return Math.max(0,bal(name)-pendingWD(name));
+}
+
+function isBanned(u){
+ if(!u.ban)return false;
+ if(u.ban.permanent)return true;
+ if(Date.now()>=u.ban.until){
+  u.ban=null;
+  save();
+  return false;
+ }
+ return true;
+}
+
+function banLabel(u){
+ if(!u.ban)return "Active";
+ if(u.ban.permanent)return "Permanent";
+ if(Date.now()>=u.ban.until)return "Active";
+ return "Until "+new Date(u.ban.until).toLocaleString("id-ID");
+}
+
+function login(){
+ let un=document.getElementById("username").value.trim();
+ let pw=document.getElementById("password").value;
+ let u=getUser(un);
+
+ if(!u||u.password!==pw)return alert("Login salah");
+ if(isBanned(u))return alert("Akun diblokir: "+banLabel(u));
+
+ current=u;
+ document.getElementById("auth").classList.add("hidden");
+
+ if(u.role==="admin"){
+  document.getElementById("adminPanel").classList.remove("hidden");
+  renderAdmin();
+ }else{
+  document.getElementById("userPanel").classList.remove("hidden");
+  renderUser();
+ }
+}
+
+function register(){
+ let un=document.getElementById("username").value.trim();
+ let pw=document.getElementById("password").value;
+
+ if(un.length<3||pw.length<4)
+ return alert("Username minimal 3 karakter dan password minimal 4");
+
+ if(db.users.some(u=>u.username.toLowerCase()===un.toLowerCase()))
+ return alert("Username sudah digunakan");
+
+ db.users.push({
+  username:un,password:pw,role:"user",
+  joined:Date.now(),ban:null
+ });
+ db.balances[un]=0;
+ save();
+ alert("Register berhasil, silakan login.");
+}
+
+function userTab(id,btn){
+ document.querySelectorAll("#userPanel .panel").forEach(p=>p.classList.remove("active"));
+ document.querySelectorAll("#userTabs button").forEach(b=>b.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ if(btn)btn.classList.add("active");
+}
+
+function adminTab(id,btn){
+ document.querySelectorAll("#adminPanel .panel").forEach(p=>p.classList.remove("active"));
+ document.querySelectorAll("#adminTabs button").forEach(b=>b.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ if(btn)btn.classList.add("active");
+ renderAdmin();
+}
+
+function submitItem(){
+ if(isBanned(current))return alert("Akun diblokir");
+
+ let qty=Number(document.getElementById("itemQty").value);
+ let ref=document.getElementById("itemRef").value.trim();
+ let note=document.getElementById("itemNote").value.trim();
+
+ if(!Number.isInteger(qty)||qty<1)return alert("Jumlah tidak valid");
+ if(!ref)return alert("ID referensi wajib diisi");
+
+ db.items.unshift({
+  id:Date.now(),username:current.username,
+  quantity:qty,reference:ref,note,
+  status:"pending",date:new Date().toLocaleString("id-ID")
+ });
+
+ document.getElementById("itemQty").value="";
+ document.getElementById("itemRef").value="";
+ document.getElementById("itemNote").value="";
+
+ save();renderUser();
+ alert("Request dikirim");
+}
+
+function submitWD(){
+ if(isBanned(current))return alert("Akun diblokir");
+
+ let a=Number(document.getElementById("wdAmount").value);
+ let method=document.getElementById("wdMethod").value;
+ let name=document.getElementById("wdName").value.trim();
+ let account=document.getElementById("wdAccount").value.trim();
+
+ if(!Number.isFinite(a)||a<MINWD)return alert("Minimal WD Rp1.000");
+ if(a>available(current.username))return alert("Saldo tersedia tidak mencukupi");
+ if(!name||!account)return alert("Lengkapi data penerima");
+
+ db.wds.unshift({
+  id:Date.now(),username:current.username,
+  amount:a,method,recipient:name,account,
+  status:"pending",date:new Date().toLocaleString("id-ID")
+ });
+
+ document.getElementById("wdAmount").value="";
+ document.getElementById("wdName").value="";
+ document.getElementById("wdAccount").value="";
+
+ save();renderUser();
+ alert("WD berhasil diajukan");
+}
+
+function approveItem(id){
+ let t=db.items.find(x=>x.id===id);
+ if(!t||t.status!=="pending")return;
+
+ if(isBanned(getUser(t.username)))return alert("User diblokir");
+
+ // Reward ditetapkan admin untuk layanan yang valid
+ let amount=Number(prompt("Masukkan reward yang disetujui (Rp):","1000"));
+ if(!Number.isFinite(amount)||amount<0)return;
+
+ db.balances[t.username]=(db.balances[t.username]||0)+amount;
+ t.reward=amount;
+ t.status="approved";
+ save();renderAdmin();
+}
+
+function rejectItem(id){
+ let t=db.items.find(x=>x.id===id);
+ if(!t||t.status!=="pending")return;
+ t.status="rejected";
+ save();renderAdmin();
+}
+
+function approveWD(id){
+ let w=db.wds.find(x=>x.id===id);
+ if(!w||w.status!=="pending")return;
+
+ if(isBanned(getUser(w.username)))return alert("User diblokir");
+ if(w.amount>bal(w.username))return alert("Saldo tidak cukup");
+
+ db.balances[w.username]-=w.amount;
+ w.status="approved";
+ save();renderAdmin();
+}
+
+function rejectWD(id){
+ let w=db.wds.find(x=>x.id===id);
+ if(!w||w.status!=="pending")return;
+ w.status="rejected";
+ save();renderAdmin();
+}
+
+function setBan(name){
+ let u=getUser(name);
+ if(!u)return;
+
+ let mode=prompt("Ketik H untuk jam, D untuk hari, P untuk permanen, U untuk unban");
+ if(!mode)return;
+ mode=mode.toUpperCase();
+
+ if(mode==="U"){
+  u.ban=null;
+ }else if(mode==="P"){
+  u.ban={permanent:true};
+ }else if(mode==="H"||mode==="D"){
+  let n=Number(prompt("Durasi berapa?"));
+  if(!Number.isFinite(n)||n<=0)return;
+  let ms=mode==="H"?n*3600000:n*86400000;
+  u.ban={permanent:false,until:Date.now()+ms};
+ }else{
+  alert("Pilihan tidak valid");return;
+ }
+
+ save();renderAdmin();
+}
+
+function badge(s){
+ return `<span class="badge ${s}">${s.toUpperCase()}</span>`;
+}
+
+function renderUser(){
+ document.getElementById("balance").textContent=money(bal(current.username));
+ document.getElementById("available").textContent=money(available(current.username));
+
+ let total=db.items.filter(x=>x.username===current.username).length;
+ let totalWD=db.wds.filter(x=>x.username===current.username).length;
+
+ document.getElementById("myProfile").innerHTML=`
+ Username: <b>${esc(current.username)}</b><br>
+ Player ID: <b>${current.joined}</b><br>
+ Total submit: <b>${total}</b><br>
+ Total WD: <b>${totalWD}</b><br>
+ Status: Active
+ `;
+
+ document.getElementById("myItems").innerHTML=
+ db.items.filter(x=>x.username===current.username).map(t=>`
+ <div class="item">
+ ${t.quantity} item · ${esc(t.reference)}<br>
+ ${badge(t.status)}<br>
+ ${t.status==="approved"?money(t.reward):""}
+ <div class="muted">${t.date}</div>
+ </div>`).join("")||"Belum ada request";
+
+ document.getElementById("myWDs").innerHTML=
+ db.wds.filter(x=>x.username===current.username).map(w=>`
+ <div class="item">
+ ${money(w.amount)} · ${esc(w.method)}<br>
+ ${badge(w.status)}<br>
+ <div class="muted">${w.date}</div>
+ </div>`).join("")||"Belum ada WD";
+}
+
+function renderPlayers(){
+ let q=(document.getElementById("playerSearch").value||"").toLowerCase();
+ let list=db.users.filter(u=>u.role==="user"&&u.username.toLowerCase().includes(q));
+
+ document.getElementById("playersList").innerHTML=list.map(u=>{
+  let deposits=db.items.filter(x=>x.username===u.username);
+  let wds=db.wds.filter(x=>x.username===u.username);
+  let approvedWD=wds.filter(x=>x.status==="approved").reduce((s,x)=>s+x.amount,0);
+  let pending=wds.filter(x=>x.status==="pending").reduce((s,x)=>s+x.amount,0);
+
+  return `<div class="item">
+   <div class="row">
+    <div>
+     <b>${esc(u.username)}</b><br>
+     <span class="muted">ID ${u.joined}</span>
+    </div>
+    <span class="badge">${isBanned(u)?"BANNED":"ACTIVE"}</span>
+   </div>
+   <button class="gray" onclick="toggleDetail('${esc(u.username)}')">Detail</button>
+   <button class="red" onclick="setBan('${esc(u.username)}')">Ban Manager</button>
+   <div class="details" id="d-${esc(u.username)}">
+    Saldo: ${money(bal(u.username))}<br>
+    Saldo tersedia: ${money(available(u.username))}<br>
+    Total submit: ${deposits.length}<br>
+    Total WD approved: ${money(approvedWD)}<br>
+    WD pending: ${money(pending)}<br>
+    Status: ${esc(banLabel(u))}
+   </div>
+  </div>`;
+ }).join("")||"User tidak ditemukan";
+}
+
+function toggleDetail(name){
+ let el=document.getElementById("d-"+name);
+ if(el)el.classList.toggle("open");
+}
+
+function renderAdmin(){
+ let players=db.users.filter(u=>u.role==="user");
+ document.getElementById("totalPlayers").textContent=players.length;
+ document.getElementById("activePlayers").textContent=players.filter(u=>!isBanned(u)).length;
+ document.getElementById("pendingItems").textContent=db.items.filter(x=>x.status==="pending").length;
+ document.getElementById("pendingWds").textContent=db.wds.filter(x=>x.status==="pending").length;
+
+ document.getElementById("overview").innerHTML=`
+ Total players terdaftar: <b>${players.length}</b><br>
+ Player aktif: <b>${players.filter(u=>!isBanned(u)).length}</b><br>
+ Submit pending: <b>${db.items.filter(x=>x.status==="pending").length}</b><br>
+ WD pending: <b>${db.wds.filter(x=>x.status==="pending").length}</b>
+ `;
+
+ renderPlayers();
+
+ document.getElementById("adminItems").innerHTML=db.items.map(t=>`
+ <div class="item">
+ <b>${esc(t.username)}</b><br>
+ Item: ${t.quantity}<br>
+ Referensi: ${esc(t.reference)}<br>
+ Catatan: ${esc(t.note)}<br>
+ ${badge(t.status)}<br>
+ <span class="muted">${t.date}</span><br>
+ ${t.status==="pending"?`
+ <button onclick="approveItem(${t.id})">Approve</button>
+ <button class="red" onclick="rejectItem(${t.id})">Reject</button>`:""}
+ </div>`).join("")||"Tidak ada request";
+
+ document.getElementById("adminWD").innerHTML=db.wds.map(w=>`
+ <div class="item">
+ <b>${esc(w.username)}</b><br>
+ Nominal: ${money(w.amount)}<br>
+ Metode: ${esc(w.method)}<br>
+ Penerima: ${esc(w.recipient)}<br>
+ Rekening: ${esc(w.account)}<br>
+ ${badge(w.status)}<br>
+ <span class="muted">${w.date}</span><br>
+ ${w.status==="pending"?`
+ <button onclick="approveWD(${w.id})">Approve</button>
+ <button class="red" onclick="rejectWD(${w.id})">Reject</button>`:""}
+ </div>`).join("")||"Tidak ada WD";
+}
+
+function logout(){
+ current=null;
+ document.getElementById("auth").classList.remove("hidden");
+ document.getElementById("userPanel").classList.add("hidden");
+ document.getElementById("adminPanel").classList.add("hidden");
+ document.getElementById("username").value="";
+ document.getElementById("password").value="";
+}
 </script>
 </body>
 </html>
