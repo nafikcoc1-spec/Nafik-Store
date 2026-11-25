@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b67e9">
+<title>Nafik Store — Kalkulator Layanan Email</title>
+<style>
+:root{--bg:#081323;--panel:#11243a;--panel2:#0c1b2c;--blue:#1677f8;--muted:#9bb2cc;--line:#223b57;--text:#f5f8ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#12345a 0,#081323 45%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:780px;margin:auto;padding:18px}.hero{padding:22px 20px;border-radius:22px;background:linear-gradient(135deg,#1677f8,#104b9b);box-shadow:0 12px 35px #00152b66}.brand{font-weight:800;letter-spacing:.6px;font-size:22px}.hero p{margin:8px 0 0;color:#dceaff}.card{background:linear-gradient(180deg,#132840,#102237);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:16px;box-shadow:0 8px 24px #0002}.eyebrow{color:var(--muted);font-size:13px}.price{font-size:32px;font-weight:850;color:#77b7ff;margin:3px 0}.field{margin-top:14px}label{display:block;color:#bed0e5;font-size:14px;margin-bottom:7px}input{width:100%;padding:14px;border:1px solid #34506e;background:#091728;color:white;border-radius:12px;font-size:16px}input:focus{outline:2px solid #2b80ff66;border-color:#4192ff}.summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;margin-top:18px}.summary strong{font-size:23px;color:#64dba5}.btn{width:100%;padding:14px;margin-top:14px;border:0;border-radius:12px;background:var(--blue);color:white;font-weight:750;font-size:16px;cursor:pointer}.btn.secondary{background:#1d3552;border:1px solid #3a5775}.note{color:var(--muted);font-size:13px;line-height:1.5}.foot{text-align:center;color:#7f98b5;font-size:12px;padding:22px 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero"><div class="brand">NAFIK STORE</div><p>Kalkulator estimasi layanan email · akses publik</p></header>
+<section class="card"><div class="eyebrow">RATE LAYANAN</div><div class="price">Rp1.000 <span style="font-size:15px;color:#dceaff;font-weight:500">/ unit</span></div><div class="note">Kalkulator estimasi biaya. Tidak meminta password atau kode OTP.</div></section>
+<section class="card"><h2 style="margin:0 0 6px;font-size:19px">Hitung estimasi</h2><div class="field"><label for="qty">Jumlah layanan</label><input id="qty" type="number" min="0" step="1" inputmode="numeric" placeholder="Masukkan jumlah" value="1"></div><div class="summary"><span>Total estimasi</span><strong id="total">Rp1.000</strong></div><button class="btn" id="copy">Salin ringkasan</button><button class="btn secondary" id="reset">Reset kalkulator</button></section>
+<section class="card"><h3 style="margin-top:0">Info</h3><p class="note">Website statis ini tidak mengumpulkan data pengguna dan tidak menyimpan riwayat transaksi. Untuk layanan email yang sah, gunakan alamat email milik sendiri dan jangan bagikan password, OTP, atau kode pemulihan.</p></section>
+<div class="foot">Nafik Store · halaman statis gratis</div>
+</div>
+<script>
+const RATE=1000, qty=document.getElementById('qty'), total=document.getElementById('total');
+function format(n){return 'Rp'+Math.max(0,n).toLocaleString('id-ID')}
+function update(){let n=Math.max(0,Math.floor(Number(qty.value)||0));total.textContent=format(n*RATE)}
+qty.addEventListener('input',update);
+document.getElementById('reset').onclick=()=>{qty.value=1;update()};
+document.getElementById('copy').onclick=async()=>{let n=Math.max(0,Math.floor(Number(qty.value)||0));let txt=`Nafik Store\nJumlah layanan: ${n}\nRate: Rp${RATE.toLocaleString('id-ID')} / unit\nTotal estimasi: ${format(n*RATE)}`;try{await navigator.clipboard.writeText(txt);alert('Ringkasan disalin!')}catch(e){alert(txt)}};
+update();
+</script>
+</body>
+</html>
